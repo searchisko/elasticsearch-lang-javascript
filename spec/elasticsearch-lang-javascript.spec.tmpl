@@ -1,0 +1,46 @@
+%define  _deploy_dir /services/elasticsearch/plugins/lang_javascript
+
+Name:           elasticsearch-lang-javascript
+Version:        2.4.1
+Release:        ${release}.el6
+Summary:        JavaScript language Plugin for elasticsearch
+
+Group:          System Environment/Daemons
+License:        Apache License, Version 2.0
+URL:            https://github.com/elasticsearch/elasticsearch-lang-javascript
+
+
+BuildRoot:      %{_tmppath}/%{name}-%{version}.%{release}-root-%(%{__id_u} -n)
+BuildArch:      noarch
+
+#set $i = 0
+#for $artifact in $all_artifacts
+  #if $artifact.startswith('elasticsearch-lang-javascript') and $artifact.endswith('.zip') and not $artifact.endswith('sources.zip')
+Source0: $artifact
+  #end if
+#end for
+
+Requires(post): chkconfig
+Requires(preun): chkconfig
+# This is for /sbin/service
+Requires(preun): initscripts
+
+%description
+JavaScript language Plugin for elasticsearch
+
+%install
+rm -rf %{buildroot}
+/usr/bin/install -d %{buildroot}%{_deploy_dir}
+unzip -d %{buildroot}%{_deploy_dir} %{SOURCE0}
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,jboss,jboss,-)
+%{_deploy_dir}
+
+
+%changelog
+* Fri Feb 27 2015 Lukas Vlcek <lvlcek at, redhat.com> 2.4.1
+- Initial plugin rpm spec template
